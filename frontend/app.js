@@ -1,10 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+require('dotenv').config();  // Load environment variables
 
 const app = express();
-const port = 3000;
-const backendServiceUrl = 'http://backend:5000';
+const port = process.env.PORT || 3000;
+const backendServiceUrl = process.env.BACKEND_SERVICE_URL || 'http://backend:5000';
 
 // Serve static files from the 'frontend/public' directory
 app.use(express.static(path.join(__dirname, 'frontend', 'public')));
@@ -13,6 +14,7 @@ app.get('/', async (req, res) => {
     try {
         const response = await axios.get(backendServiceUrl);
         const data = response.data;
+
         res.send(`
             <!DOCTYPE html>
             <html lang="en">
@@ -77,14 +79,14 @@ app.get('/', async (req, res) => {
                     }
                     .feature img {
                         width: 100%;
-                        height: 200px; /* Fixed height for uniform size */
-                        object-fit: cover; /* Ensure images cover the container */
+                        height: 200px;
+                        object-fit: cover;
                         border-radius: 8px;
                     }
                     .feature h3 {
                         margin-top: 10px;
                         font-size: 1.5em;
-                        color: #007bff; /* Blue text color */
+                        color: #007bff;
                     }
                     .feature p {
                         font-size: 1em;
@@ -92,10 +94,10 @@ app.get('/', async (req, res) => {
                         color: #333;
                     }
                     .feature:hover h3 {
-                        color: #0056b3; /* Darker blue on hover */
+                        color: #0056b3;
                     }
                     .feature:hover {
-                        background: rgba(0, 0, 0, 0.1); /* Light background effect on hover */
+                        background: rgba(0, 0, 0, 0.1);
                     }
                     @media (max-width: 768px) {
                         .features {
@@ -147,7 +149,7 @@ app.get('/', async (req, res) => {
             </html>
         `);
     } catch (error) {
-        res.send(`
+        res.status(500).send(`
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -155,13 +157,12 @@ app.get('/', async (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Error</title>
                 <style>
-                    /* Your existing error CSS styles */
+                    body { font-family: Arial, sans-serif; }
+                    .container { text-align: center; padding: 20px; }
                 </style>
             </head>
             <body>
-                <header>
-                    <h1>Error</h1>
-                </header>
+                <header><h1>Error</h1></header>
                 <div class="container">
                     <p><strong>Error Message:</strong> ${error.message}</p>
                 </div>
