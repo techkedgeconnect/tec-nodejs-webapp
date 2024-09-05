@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "1.0.1",
-  "description": "Simple frontend service for Learning Cloud-Native Application and Observability",
+  "description": "Simple frontend microservice for Learning Cloud-Native Application and Observability",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
