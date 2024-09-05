@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project demonstrates the use of Helm charts and ArgoCD to automate the deployment of a microservices application. The project is designed to automatically deploy updates to the microservices whenever changes are pushed to the Helm charts in the Source Code Management (SCM) repository. The deployment takes place in a Google Kubernetes Engine (GKE) cluster.
+This project demonstrates the use of Helm charts and ArgoCD to automate the deployment of a 2-tier microservices application comprising a frontend written in Nodejs and a backend developed using Python (Flask). The project is designed to automatically deploy updates to the microservices whenever changes are pushed to the Helm charts in the Source Code Management (SCM) repository. The deployment takes place in a self-managed Kubernetes cluster on AWS.
 
 ## Project Structure
 
@@ -10,9 +10,9 @@ The repository is organized as follows:
 
 - **`K8s/`**: Contains Kubernetes manifests for deploying the backend and frontend services.
   - `backend-deployment.yaml`: Kubernetes deployment manifest for the backend service.
-  - `backend-service.yaml`: Kubernetes service manifest for the backend service.
+  - `backend-svc.yaml`: Kubernetes service manifest for the backend service.
   - `frontend-deployment.yaml`: Kubernetes deployment manifest for the frontend service.
-  - `frontend-service.yaml`: Kubernetes service manifest for the frontend service.
+  - `frontend-svc.yaml`: Kubernetes service manifest for the frontend service.
   - `kcustomization.yaml`: A customization file for the Kubernetes resources.
 
 - **`backend/`**: Contains the backend microservice code and Docker configuration.
@@ -40,8 +40,8 @@ The repository is organized as follows:
 
 To run this project, you will need the following:
 
-- **Google Cloud Platform (GCP) Account**: For deploying the application to GKE.
-- **GKE Cluster**: A Kubernetes cluster in GKE.
+- **Amazon Web Services (AWS) Account**: For deploying the application to GKE.
+- **Self-Managed Cluster**: A Kubernetes cluster in AWS.
 - **Helm**: To package and manage Kubernetes applications using Helm charts.
 - **ArgoCD**: A GitOps continuous delivery tool for Kubernetes.
 - **Docker**: For containerizing the microservices.
@@ -53,8 +53,8 @@ To run this project, you will need the following:
 
 Clone this repository to your local machine:
 
-git clone https://github.com/isanah/helm-argocd.git
-cd helm-argocd
+git clone https://github.com/techkedgeconnect/tec-nodejs-webapp.git
+cd tec-nodejs-webapp
 
 ### 2. Build and Push Docker Images
 
