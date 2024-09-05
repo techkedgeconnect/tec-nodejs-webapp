@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Cloud-Native Application Deployment and Observability</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #8ec3eb;
+            color: #333;
+        }
+        header {
+            background: url('/images/Hero.jpg') no-repeat center center/cover;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            background-blend-mode: darken;
+        }
+        header h1 {
+            font-size: 3em;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .container h2 {
+            font-size: 2em;
+            margin-top: 0;
+        }
+        .container p {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 40px;
+        }
+        .feature {
+            text-align: center;
+            width: 30%;
+            margin: 10px 0;
+            cursor: pointer;
+            box-sizing: border-box;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+        }
+        .feature img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .feature h3 {
+            margin-top: 10px;
+            font-size: 1.5em;
+            color: #007bff;
+        }
+        .feature p {
+            font-size: 1em;
+            margin: 10px 0;
+            color: #333;
+        }
+        .feature:hover h3 {
+            color: #0056b3;
+        }
+        .feature:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 768px) {
+            .features {
+                flex-direction: column;
+            }
+            .feature {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+    <script>
+        async function fetchBackendMessage() {
+            try {
+                const response = await fetch('/api/message');
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                alert('Failed to fetch message from backend.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Techkedgeconnect!</h1>
+    </header>
+    <div class="container">
+        <h2>Learn to Deploy and Observe Cloud-Naitive Application using Modern DevOps Tools</h2>
+        <div class="features">
+            <div class="feature" onclick="fetchBackendMessage()">
+                <img src="https://miro.medium.com/v2/resize:fit:4800/format:webp/1*eVqphQ2aNKxqHPMPxjRzAA.png" alt="Kubernetes Architecture">
+                <h3>Learn Kubernetes</h3>
+                <p>Learning Kubernetes involves mastering container orchestration to automate deploying, scaling, and managing applications. Start with core concepts like pods, services, and deployments. Practice on cloud or local clusters to understand scaling, rolling updates, and networking, making Kubernetes essential for modern cloud-native app management.</p>
+            </div>
+            <div class="feature" onclick="fetchBackendMessage()">
+                <img src="https://binarymaps.com/wp-content/uploads/2020/03/docker-architecture.jpg" alt="Container Architecture">
+                <h3>Learn Container</h3>
+                <p>Learning containers involves understanding how they virtualize OS environments to run applications consistently. Start with Docker to explore building, managing, and deploying containers. Practice using container images, registries, and orchestration tools like Kubernetes for scalable application management across various environments.</p>
+            </div>
+            <div class="feature" onclick="fetchBackendMessage()">
+                <img src="https://managed.co.uk/wp-content/uploads/2023/04/0x0.jpg" alt="Cloud Services">
+                <h3>Top-notch Gear</h3>
+                <p>Learning cloud services involves understanding platforms like AWS, Azure, and Google Cloud to deliver scalable resources on-demand. Focus on key services like compute, storage, and networking. Hands-on labs and certifications help grasp concepts like virtualization, serverless computing, and cost management for effective cloud infrastructure management</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
