@@ -1,4 +1,3 @@
-import os
 import logging
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -17,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 def index():
     app.logger.info("Index route accessed")
     return jsonify({
-        'message': 'Welcome to Surfing in Canada',
+        'message': 'Welcome to Techkedgeconnect - Learn Modern Application Deployment and Observability',
     })
 
 # Custom 404 error handler
@@ -34,15 +33,14 @@ def internal_server_error(e):
 
 # Run the app
 if __name__ == '__main__':
-    # Use environment variables for host and port
-    host = os.getenv('HOST', '0.0.0.0')
-    port = int(os.getenv('PORT', 5000))
-
-    # Enable debug mode via environment variable, default is False
-    debug_mode = os.getenv('DEBUG', 'False').lower() in ['true', '1', 't']
+    # Hardcoded values for host, port, and debug mode
+    host = '0.0.0.0'  # The app will be accessible on all network interfaces
+    port = 5000       # The port to run the application on
+    debug_mode = False  # Set debug mode to False
 
     # Log the startup message
     app.logger.info(f"Starting app on {host}:{port} with debug={debug_mode}")
 
     # Start the Flask app
     app.run(host=host, port=port, debug=debug_mode)
+
