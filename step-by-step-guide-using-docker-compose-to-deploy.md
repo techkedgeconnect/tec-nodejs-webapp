@@ -82,5 +82,5 @@
 
 # 9. Stop the Application
      - To stop the application, you can use this command
-      - docker-compose down - This command will stop and remove the containers, networks, and volumes created by docker-compose up.
+       - docker-compose down - This command will stop and remove the containers, networks, and volumes created by docker-compose up.
 
