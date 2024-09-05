@@ -1,4 +1,4 @@
-# Helm-ArgoCD Project for Microservices Deployment
+# Helm-ArgoCD Project for 2-Tier Microservices Deployment
 
 ## Overview
 
@@ -13,9 +13,8 @@ The repository is organized as follows:
   - `backend-svc.yaml`: Kubernetes service manifest for the backend service.
   - `frontend-deployment.yaml`: Kubernetes deployment manifest for the frontend service.
   - `frontend-svc.yaml`: Kubernetes service manifest for the frontend service.
-  - `kcustomization.yaml`: A customization file for the Kubernetes resources.
-
-- **`backend/`**: Contains the backend microservice code and Docker configuration.
+    
+  - **`backend/`**: Contains the backend microservice code and Docker configuration.
   - `Dockerfile`: Dockerfile to build the backend service image.
   - `app.py`: Backend application code.
   - `requirements.txt`: Python dependencies for the backend service.
