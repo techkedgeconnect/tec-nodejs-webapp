@@ -6,7 +6,8 @@ const app = express();
 
 // Hardcoded values for port and backend service URL
 const port = 3000;
-const backendServiceUrl = 'http://backend:5000';
+const backendServiceUrl = 'http://backend-service:5000';
+// const backendServiceUrl = 'http://backend:5000';
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));

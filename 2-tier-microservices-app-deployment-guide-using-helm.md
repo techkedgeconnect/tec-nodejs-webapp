@@ -1,0 +1,148 @@
+# Deploying the 2-Tier Microservices to Kubernetes Cluster
+  - Update the backend URL in app.js to use the correct Kubernetes service name - This modification ensures that the frontend application can correctly
+    communicate with the backend service when deployed in the Kubernetes, as it will resolve the service using Kubernetes internal DNS. Kubernetes
+    provides DNS for service discovery. Since both backend and frontend services will in the same namespace in this project, they can be reached by
+    their name. In this scenario, you just need to make sure you  modify the backendServiceUrl to reference the backend-service name as specified ('http://backend-service:5000') in the backend service manifest for seamless communication. 
+
+    However, if both services are deployed into different namespaces, then you will need to include the namespace of the backend service in the backendServiceUrl ('http://backend-service.namespace:5000')
+    
+  - Modify the backend URL in app.js file - const backendServiceUrl = 'http://backend:5000'; ===> const backendServiceUrl = 'http://backend-service:5000';
+  - Change the directory from the project root directory to frontend directory using this command - cd frontend
+    - Edit app.js using this comnand - vi app.js
+    - Change backendServiceUrl from const backendServiceUrl = 'http://backend:5000'; ===> const backendServiceUrl = 'http://backend-service:5000';
+    - Save and exit the app.js file.
+     
+# Rebuid the frontend-service and backend-service docker images based on the modification using these commands 
+  - Navigate to the frontend directory to build the frontend-service docker image using the command 
+    - docker build -t frontend-service .
+  - Navigate to the backend directory to build the backend-service docker image using the command 
+    - docker build -t backend-service .
+     
+# Tag the frontend-service and backend-service docker images 
+  - Tag the frontend-service docker image using the command 
+    - docker tag frontend-service:latest <aws-account-id>.dkr.ecr.<region>.amazonaws.com/frontend-servic:latest
+  - Tag the backend-service docker image using the command 
+    - docker tag backend-service:latest <aws-account-id>.dkr.ecr.<region>.amazonaws.com/backend-servic:latest
+       
+# Push the tagged frontend-service and backend-service docker images to the Amazon ECR private repositories for backend-service and frontend-service   
+  - Retrieve an authentication token and authenticate Docker to your Amazon ECR registry using the command 
+    - aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <aws-account-id>.dkr.ecr.<region>.amazonaws.com
+  - Push the frontend-service image to amazon ecr frontend-service private repository using the command 
+    - docker push <aws-account-id>.dkr.ecr.<region>.amazonaws.com/frontend-servic:latest
+  - Push the backend-service image to amazon ecr backend-service private repository using the command 
+    - docker push <aws-account-id>.dkr.ecr.<region>.amazonaws.com/backend-servic:latest
+       
+# Create Kubernetes deployment manifests for the deployment
+  - Navigate to the project root directory and create K8s directory for the kubernetes manifests using the command - mkdir K8s
+  - Change into the newly created K8s directory using the command - cd K8s
+  - Create the following manifest files inside the K8s directory and populate it with desired configurations
+    - vi backend-deployment.yaml
+    - vi backend-svc.yaml
+    - vi frontend-deployment.yaml
+    - vi frontend-svc.yaml 
+       
+# Check the status of your Kubernetes Cluster by running the following commands
+  - kubectl get nodes - to see the status of all your nodes
+  - kubectl get namespace - to see all the namespaces within your cluster
+  - kubectl get svc - to see all running services within your cluster
+  - kubectl get pods -n kube-system - to see the status of all the pods running within the kube-system namespace
+      
+# Create a namespace for your deployment using this command 
+  - kubectl create ns tec-web-app
+       
+# Deploy the 2-tier microservices web application - (Make sure you are in the K8s directory)
+  - To create the backend deployment run this command - kubectl apply -f backend-deployment.yaml -n tec-web-app
+  - To create the backend service run this command - kubectl apply -f backend-svc.yaml -n tec-web-app
+  - To create the frontend deployment run this command - kubectl apply -f frontend-deployment.yaml -n tec-web-app
+  - To create the frontend service run this command - kubectl apply -f frontend-svc.yaml -n tec-web-app
+       
+# Check the status of your deployed web application by running the following commands
+  - To check your deployments run - kubectl get deployments -n tec-web-app
+  - To check your services run - kubectl get svc -n tec-web-app
+  - To check your pods run - kubectl get pods -n tec-web-app
+       
+# To access the 2-Tier web app 
+  - Set up NGINX on an external ec2 instance as a Reverse Proxy and configure it for your Kubernetes cluster to forward traffic to the frontend-service
+  - Install NGINX on an ec2 instance running this command
+  - sudo apt update && sudo apt install nginx
+  - Configure the NGINX by modifying its configuration file (/etc/nginx/sites-available/default) to proxy traffic to the cluster NodePort
+
+http {
+    upstream frontend_service {
+        server <node1-ip>:NodePort;  # Replace with the IP of Node 1 and the exposed NodePort
+        server <node2-ip>:NodePort;  # Replace with the IP of Node 2 and the exposed NodePort
+    }
+
+    server {
+        listen 80;  # Listening on port 80 for HTTP requests
+        server_name <ec2-instance-ip>;  # Replace with your EC2 public IP address
+
+        location / {
+            proxy_pass http://frontend_service;  # Proxy requests to the frontend_service upstream
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+}
+
+    - Restart NGINX service by running the command - sudo systemctl restart nginx
+    - Access the 2-tier web application through the nginx ec2 instance's public IP or domain name from your browser 
+      - http://nginx_ec2_instance_public_ip/
+    - This method ensures your multi-node Kubernetes cluster is properly set up, and traffic is routed to the application via the NGINX reverse proxy
+
+# Stop the Application
+  - To stop the application, you can use this command
+    - kubectl delete deployment frontend-deployment -n tec-web-app
+    - kubectl delete deployment blackend-deployment - n tec-web-app
+    - kubectl delete service frontend-service -n tec-web-app
+    - kubectl delete service blackend-service -n tec-web-app
+
+# Simplify the 2-tier microservices application deployment using helm chart
+  - Helm Chart - A Helm chart is a package manager for Kubernetes, similar to what APT is to Debian or Yum is to RedHat. 
+  - It simplifies the process of defining, installing, and upgrading complex Kubernetes applications
+  - Packaging Kubernetes Applications - A Helm chart bundles all the Kubernetes resources (like deployments, services, and config maps) necessary to run
+    an application into a single package.
+  - With helm chart you can add variable to your yaml files
+  
+# Install Helm Chart on your local or dev machine running this command 
+  - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+  - Verify the installation of Helm Chart 
+  - helm version
+  - Create a Helm chart for the 2-tier microservices application by running this command 
+    - helm create tec-web-app - this command creates a new directory with pre-configured chart structure
+    - Change into the newly created helm chart directory and list out the contents;
+    - cd tec-web-app && ls - pre-configured contents - Chart.yaml, charts, templates and values.yaml
+  - Delete the content of values.yaml and populate with desired values of your configuration
+  - Delete Chart.yaml, and charts - rm Chart.yaml && rm charts
+  - Navigate into the templates directory and delete all contents by running the command 
+    - cd templates && rm -rf *
+  - Create deployment.yaml and service.yaml inside the templates directory - templates/deployment.yaml, templates/service.yaml
+  - Define frontend and backend deployments with desired configurations in the templates/deployment.yaml for the app deployments
+  - Define services for both frontend and backend with the desired configuration in the templates/service.yaml for the app services
+  - Deploy the 2-tier microservices web app to your Kubenetes Cluster using Helm - Navigate to the Helm chart directory
+    - cd tec-web-app
+  - Deploy the helm chart to your kubernetes cluster by running this command
+    - helm install tec-web-app . --namespace tec-web-app --create-namespace
+
+# Check the status of the deployed web application using helm chart by running the following commands
+  - To check your deployments run - kubectl get deployments -n tec-web-app
+  - To check your services run - kubectl get svc -n tec-web-app
+  - To check your pods run - kubectl get pods -n tec-web-app
+  - To check the active namespaces in your cluster run - kubectl get namespaces
+   
+# To access the 2-Tier web app
+  - Modify the NGINX configuration file (/etc/nginx/sites-available/default) to proxy traffic to the cluster NodePort by adding the new NodePort
+  - Restart NGINX service by running the command - sudo systemctl restart nginx
+  - Access the 2-tier web application through the nginx ec2 instance's public IP or domain name from your browser - 
+    http://nginx_ec2_instance_public_ip/
+
+# Stop the Application
+  - To stop the application, you can use this command
+  - kubectl delete deployment frontend-deployment -n tec-web-app
+  - kubectl delete deployment blackend-deployment - n tec-web-app
+  - kubectl delete service frontend-service -n tec-web-app
+  - kubectl delete service blackend-service -n tec-web-app
+     
+       

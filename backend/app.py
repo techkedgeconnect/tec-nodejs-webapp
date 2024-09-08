@@ -43,4 +43,3 @@ if __name__ == '__main__':
 
     # Start the Flask app
     app.run(host=host, port=port, debug=debug_mode)
-

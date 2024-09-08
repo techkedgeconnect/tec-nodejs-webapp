@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: tec-web-app
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: <aws-account-id>.dkr.ecr.<region>.amazonaws.com/backend-service:latest  # ECR backend image URL
+          ports:
+            - containerPort: 5000
+      imagePullSecrets:
+        - name: ecr-pull-secret  # Reference to the image pull secret to access ECR
+
