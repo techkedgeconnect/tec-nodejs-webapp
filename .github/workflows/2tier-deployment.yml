@@ -5,6 +5,17 @@ on:
   push:
     branches:
       - tec-2tier-microservices-deployment
+    paths-ignore:
+      - 'dev-ecr-repo/**'
+      - 'modules/**'
+      - 'k8s/**'
+      - 'README.md'
+      - '2-tier-microservices-app-deployment-guide-using-helm.md'
+      - 'docker-compose.yml'
+      - 'step-by-step-guide-using-docker-compose-to-deploy.md'
+      - 'two-tier-microservices-overview.md'
+
+
 
 jobs:
   build-and-deploy:
