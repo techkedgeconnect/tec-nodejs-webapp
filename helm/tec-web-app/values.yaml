@@ -1,0 +1,7 @@
+namespace: tec-web-app
+image:
+  repository: 381492305313.dkr.ecr.eu-west-2.amazonaws.com
+  backendTag: latest
+  frontendTag: latest
+imagePullSecrets:
+  - name: ecr-pull-secret

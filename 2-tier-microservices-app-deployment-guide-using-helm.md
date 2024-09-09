@@ -18,7 +18,7 @@
   - Navigate to the backend directory to build the backend-service docker image using the command 
     - docker build -t backend-service .
      
-# Tag the frontend-service and backend-service docker images 
+Tag the frontend-service and backend-service docker images 
   - Tag the frontend-service docker image using the command 
     - docker tag frontend-service:latest <aws-account-id>.dkr.ecr.<region>.amazonaws.com/frontend-servic:latest
   - Tag the backend-service docker image using the command 
@@ -126,7 +126,7 @@ http {
   - Deploy the helm chart to your kubernetes cluster by running this command
     - helm install tec-web-app . --namespace tec-web-app --create-namespace
 
-# Check the status of the deployed web application using helm chart by running the following commands
+ Check the status of the deployed web application using helm chart by running the following commands
   - To check your deployments run - kubectl get deployments -n tec-web-app
   - To check your services run - kubectl get svc -n tec-web-app
   - To check your pods run - kubectl get pods -n tec-web-app

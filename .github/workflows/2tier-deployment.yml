@@ -1,0 +1,68 @@
+name: CI/CD for 2-Tier Microservice Web App
+
+# Trigger the workflow on push to the main branch
+on:
+  push:
+    branches:
+      - tec-2tier-microservices-deployment
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout Code
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Docker Buildx for multi-platform builds
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Step 3: Log in to Amazon ECR using GitHub Secrets
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+      # Step 4: Build and Push Backend Image to ECR
+      - name: Build and Push Backend Image
+        run: |
+          docker build -t backend-service ./backend
+          docker tag backend-service:latest ${{ secrets.ECR_REGISTRY }}/backend-service:latest
+          docker push ${{ secrets.ECR_REGISTRY }}/backend-service:latest
+
+      # Step 5: Build and Push Frontend Image to ECR
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t frontend-service ./frontend
+          docker tag frontend-service:latest ${{ secrets.ECR_REGISTRY }}/frontend-service:latest
+          docker push ${{ secrets.ECR_REGISTRY }}/frontend-service:latest
+
+      # Step 6: Create Image Pull Secret in Kubernetes using ECR credentials
+      - name: Create Image Pull Secret
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+        run: |
+          kubectl create secret docker-registry ecr-pull-secret \
+          --namespace tec-web-app \
+          --docker-server=${{ secrets.ECR_REGISTRY }} \
+          --docker-username=AWS \
+          --docker-password=$(aws ecr get-login-password --region $AWS_REGION)
+
+      # Step 7: Sync ArgoCD to Deploy the Helm Chart
+      - name: Sync ArgoCD
+        env:
+          ARGOCD_SERVER_URL: ${{ secrets.ARGOCD_SERVER_URL }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
+        run: |
+          argocd app sync tec-web-app \
+            --server $ARGOCD_SERVER_URL \
+            --auth-token $ARGOCD_AUTH_TOKEN
