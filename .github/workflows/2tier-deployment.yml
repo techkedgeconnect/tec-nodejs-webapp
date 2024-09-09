@@ -62,7 +62,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
         run: |
-          kubectl create secret docker-registry ecr-pull-secret \
+          sudo kubectl create secret docker-registry ecr-pull-secret \
           --namespace tec-web-app \
           --docker-server=${{ secrets.ECR_REGISTRY }} \
           --docker-username=AWS \
