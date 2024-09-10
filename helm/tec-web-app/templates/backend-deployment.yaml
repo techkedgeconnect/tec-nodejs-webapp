@@ -3,10 +3,8 @@ kind: Deployment
 metadata:
   name: backend-deployment
   namespace: {{ .Values.namespace }}
-  labels:
-    app: backend
 spec:
-  replicas: 2
+  replicas: {{ .Values.backend.replicas }}
   selector:
     matchLabels:
       app: backend
@@ -16,9 +14,9 @@ spec:
         app: backend
     spec:
       containers:
-        - name: backend
-          image: "{{ .Values.image.repository }}/backend-service:{{ .Values.image.backendTag }}"
-          ports:
-            - containerPort: 5000
+      - name: backend
+        image: "{{ .Values.image.repository }}/backend-service:{{ .Values.image.backendTag }}"
+        ports:
+        - containerPort: {{ .Values.backend.containerPort }}
       imagePullSecrets:
-        - name: ecr-pull-secret
+      - name: ecr-pull-secret

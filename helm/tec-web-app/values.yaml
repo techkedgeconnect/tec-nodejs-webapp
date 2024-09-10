@@ -1,7 +1,15 @@
-namespace: tec-web-app
 image:
   repository: 381492305313.dkr.ecr.eu-west-2.amazonaws.com
-  backendTag: latest
-  frontendTag: latest
-imagePullSecrets:
-  - name: ecr-pull-secret
+  backendTag: "latest"
+  frontendTag: "latest"
+
+backend:
+  replicas: 2
+  namespace: tec-web-app
+  containerPort: 5000
+
+frontend:
+  replicas: 2
+  namespace: tec-web-app
+  containerPort: 3000
+  backendUrl: "http://backend-service:5000"
