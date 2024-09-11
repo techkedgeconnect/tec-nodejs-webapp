@@ -1,7 +1,7 @@
 image:
   repository: 381492305313.dkr.ecr.eu-west-2.amazonaws.com
-  backendTag: "10816099733"
-  frontendTag: "10816099733"
+  backendTag: "10818093725"
+  frontendTag: "10818093725"
 
 backend:
   replicas: 2
