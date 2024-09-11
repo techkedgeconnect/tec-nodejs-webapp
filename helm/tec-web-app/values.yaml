@@ -5,11 +5,9 @@ image:
 
 backend:
   replicas: 2
-  namespace: tec-web-app
   containerPort: 5000
 
 frontend:
   replicas: 2
-  namespace: tec-web-app
   containerPort: 3000
   backendUrl: "http://backend-service:5000"

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-deployment
-  namespace: {{ .Values.namespace }}
+  namespace: tec-web-app
 spec:
   replicas: {{ .Values.frontend.replicas }}
   selector:

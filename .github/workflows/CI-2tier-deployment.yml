@@ -17,12 +17,12 @@ on:
 
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout Code
-      - name: Checkout Code
+      # Step 1: Checkout code
+      - name: Checkout code
         uses: actions/checkout@v2
 
       # Step 2: Set up Docker Buildx
@@ -39,40 +39,31 @@ jobs:
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
 
-      # Step 4: Build and Push Backend Image with github.run_id as Tag
+      # Step 4: Build and Push Backend Image
       - name: Build and Push Backend Image
         run: |
           docker build -t backend-service ./backend
           docker tag backend-service:latest ${{ secrets.ECR_REGISTRY }}/backend-service:${{ github.run_id }}
           docker push ${{ secrets.ECR_REGISTRY }}/backend-service:${{ github.run_id }}
 
-      # Step 5: Build and Push Frontend Image with github.run_id as Tag
+      # Step 5: Build and Push Frontend Image
       - name: Build and Push Frontend Image
         run: |
           docker build -t frontend-service ./frontend
           docker tag frontend-service:latest ${{ secrets.ECR_REGISTRY }}/frontend-service:${{ github.run_id }}
           docker push ${{ secrets.ECR_REGISTRY }}/frontend-service:${{ github.run_id }}
 
-      # Step 6: Create Image Pull Secret in Kubernetes
-      - name: Create Image Pull Secret
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+      # Step 6: Update the Helm `values.yaml` with new tags
+      - name: Update values.yaml with new image tags
         run: |
-          sudo kubectl create secret docker-registry ecr-pull-secret \
-          --namespace tec-web-app \
-          --docker-server=${{ secrets.ECR_REGISTRY }} \
-          --docker-username=AWS \
-          --docker-password=$(aws ecr get-login-password --region $AWS_REGION) \
-          --dry-run=client -o yaml | kubectl apply -f -
+          sed -i "s/backendTag: .*/backendTag: \"${{ github.run_id }}\"/" helm/tec-web-app/values.yaml
+          sed -i "s/frontendTag: .*/frontendTag: \"${{ github.run_id }}\"/" helm/tec-web-app/values.yaml
 
-      # Step 7: Update Helm Values and Deploy
-      - name: Update Helm Chart with new Image Tags
+      # Step 7: Commit and Push Updated values.yaml
+      - name: Commit changes
         run: |
-          helm upgrade --install tec-web-app ./helm/tec-web-app \
-            --namespace tec-web-app \
-            --set image.backendTag=${{ github.run_id }} \
-            --set image.frontendTag=${{ github.run_id }}
-
+          git config --global user.email "techkedgeconnect@gmail.com"
+          git config --global user.name "Samson Wahab"
+          git add helm/tec-web-app/values.yaml
+          git commit -m "Update image tags to backend: ${{ github.run_id }}, frontend: ${{ github.run_id }}"
+          git push
