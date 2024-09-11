@@ -64,6 +64,7 @@ jobs:
         run: |
           git config --global user.email "techkedgeconnect@gmail.com"
           git config --global user.name "Samson Wahab"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/techkedgeconnect/tec-nodejs-webapp.git
           git add helm/tec-web-app/values.yaml
           git commit -m "Update image tags to backend: ${{ github.run_id }}, frontend: ${{ github.run_id }}"
           git push
