@@ -92,13 +92,9 @@ update the image tag in the values.yaml file, and commit the changes back to the
      - Namespace: tec-web-app
      - Sync Policy: Set to Automatic to automatically apply changes.
 
-   - Using CLI
-     argocd app create tec-web-app \
-  --repo https://github.com/<your-github-repo>.git \
-  --path /helm/tec-web-app \
-  --dest-server https://kubernetes.default.svc \
-  --dest-namespace tec-web-app \
-  --sync-policy automated
+   - Using CLI by executing this command
+   - argocd app create tec-web-app \ --repo https://github.com/<your-github-repo>.git \ --path /helm/tec-web-app \
+     --dest-server https://kubernetes.default.svc \ --dest-namespace tec-web-app \ --sync-policy automated
 
 This configuration ensures that whenever there are new commits to the Helm chart or image tags, ArgoCD will automatically pull and deploy the updates.
 
