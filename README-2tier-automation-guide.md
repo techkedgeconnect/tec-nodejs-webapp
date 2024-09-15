@@ -66,10 +66,9 @@ update the image tag in the values.yaml file, and commit the changes back to the
       backend image will be pushed as: <aws_account_id>.dkr.ecr.<aws_region>.amazonaws.com/backend-service:12345678
 
 5. Implement Continuous Delivery Using ARGOCD
-   ArgoCD is a declarative, GitOps-based continuous delivery tool for Kubernetes.
-   It enables automated deployment, monitoring, and management of Kubernetes applications by continuously
-   syncing the desired state from a Git repository to the Kubernetes cluster.
-   
+   - ArgoCD is a declarative, GitOps-based continuous delivery tool for Kubernetes.
+     It enables automated deployment, monitoring, and management of Kubernetes applications by continuously
+     syncing the desired state from a Git repository to the Kubernetes cluster.
    - Install ArgoCD on your Kubernetes cluster using manifests
      - kubectl create namespace argocd
      - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
