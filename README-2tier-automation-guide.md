@@ -92,7 +92,7 @@ update the image tag in the values.yaml file, and commit the changes back to the
      - Namespace: tec-web-app
      - Sync Policy: Set to Automatic to automatically apply changes.
 
-   - CLI
+   - Using CLI
      argocd app create tec-web-app \
   --repo https://github.com/<your-github-repo>.git \
   --path /helm/tec-web-app \
